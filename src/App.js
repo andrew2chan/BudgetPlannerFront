@@ -1,23 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import SlidingNavbar from './Components/SlidingNavbar';
 
 function App() {
+  const [menuState, updateMenuState] = useState("menu");
+
+  const handleMenuClick = () => {
+    updateMenuState(menuState === "menu" ? "close": "menu")
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div className="max-sm:flex max-sm:flex-col h-screen w-screen">
+      <header className="max-sm:flex max-sm:items-center max-sm:justify-between max-sm:border-b-2 max-sm:shadow max-sm:py-3 max-sm:px-2">
+        <span className="max-sm:text-4xl">LOGO</span>
+        <span className="material-symbols-outlined max-sm:text-4xl" onClick={handleMenuClick}><button>{menuState}</button></span>
       </header>
+      <main className="max-sm:flex-1 relative">
+        <SlidingNavbar menustate={menuState} />
+      </main>
     </div>
   );
 }
