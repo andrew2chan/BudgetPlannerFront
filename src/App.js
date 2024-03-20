@@ -15,7 +15,7 @@ function App() {
         <span className="material-symbols-outlined max-sm:text-4xl" onClick={handleMenuClick}><button>{menuState}</button></span>
       </header>
       <main className="max-sm:flex-1 relative">
-        <SlidingNavbar menustate={menuState} />
+        <SlidingNavbar menustate={menuState} handlemenuclick={handleMenuClick}/>
       </main>
     </div>
   );
