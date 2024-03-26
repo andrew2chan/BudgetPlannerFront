@@ -3,9 +3,7 @@ module.exports = {
     content: ["./src/**/*.{html,js}"],
     theme: {
       extend: {
-        inset: {
-          'invert-full': '-100%'
-        }
+        
       },
     },
     plugins: [],

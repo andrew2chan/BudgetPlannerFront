@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -8,12 +8,16 @@ import App from './App';
 import Login from './Components/Login';
 import Register from './Components/Register';
 import LandingPage from './Components/LandingPage';
+import SlidingNavbar from './Components/SlidingNavbar';
 
 const NavBarWrapper = () => {
+  const [menuState, updateMenuState] = useState("menu");
+
   return (
     <>
-      <App />
+      <App updatemenustate={updateMenuState} menustate={menuState} />
       <Outlet />
+      <SlidingNavbar updatemenustate={updateMenuState} menustate={menuState} />
     </>
   )
 }

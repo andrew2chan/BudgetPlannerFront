@@ -2,18 +2,18 @@ import { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import * as d3 from 'd3';
 
-const SlidingNavbar = ({menustate, handlemenuclick}) => {
+const SlidingNavbar = ({ menustate, updatemenustate }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
         if(menustate === "menu") { //this means that menu is not open
             d3.select("#sidebar")
-                .classed("right-invert-full", true)
+                .classed("-right-full", true)
                 .classed("right-0", false)
         }
         else {
             d3.select("#sidebar")
-                .classed("right-invert-full", false)
+                .classed("-right-full", false)
                 .classed("right-0", true)
         }
     },[menustate])
@@ -26,15 +26,23 @@ const SlidingNavbar = ({menustate, handlemenuclick}) => {
             default:
                 navigate("/register");
         }
-        handlemenuclick();
+        updatemenustate("menu");
+    }
+
+    const handleCloseSidebar = () => {
+        updatemenustate("menu");
     }
 
     return (
-        <nav className="fixed right-invert-full max-sm:max-w-full w-full transition-all" id="sidebar">
-            <ul className="max-w-full overflow-hidden flex flex-col items-center">
-                <li className="py-3"><button onClick={handleLoginRegister} id="login">Login</button></li>
-                <li className="py-3"><button onClick={handleLoginRegister} id="register">Register</button></li>
-            </ul>
+        <nav className="fixed -right-full max-sm:max-w-full w-full h-screen top-0 bg-white transition-all" id="sidebar">
+            <div className="flex flex-col">
+                <span className="material-symbols-outlined max-sm:text-4xl self-end" onClick={handleCloseSidebar}><button>close</button></span>
+                <ul className="max-w-full overflow-hidden flex flex-col items-center">
+                    <li className="py-3 border-b-2"><button onClick={handleLoginRegister} id="login">Login</button></li>
+                    <li className="py-3 border-b-2"><button onClick={handleLoginRegister} id="register">Register</button></li>
+                </ul>
+            </div>
+            
         </nav>
     );
 }
