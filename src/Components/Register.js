@@ -81,7 +81,7 @@ const Register = () => {
                 <div className="relative">
                     <input type={showTextOrPassword} className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginPass}></input>
                     <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Password</span>
-                    <span class="material-symbols-outlined absolute right-3 top-1 cursor-pointer" onClick={handleVisible}>{!passwordVisible ? "visibility_off" : "visibility"}</span>
+                    <span className="material-symbols-outlined absolute right-3 top-1 cursor-pointer" onClick={handleVisible}>{!passwordVisible ? "visibility_off" : "visibility"}</span>
                 </div>
                 <input type="submit" className="border bg-blue-600 text-white rounded-2xl py-2 w-full" onClick={handleDataSubmit}></input>
             </div>
