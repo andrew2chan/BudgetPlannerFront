@@ -3,12 +3,17 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { Provider } from 'react-redux';
 
 import App from './App';
 import Login from './Components/Login';
 import Register from './Components/Register';
 import LandingPage from './Components/LandingPage';
 import SlidingNavbar from './Components/SlidingNavbar';
+
+import store from './Redux/store';
+import Overview from './Components/Overview';
+import Profile from './Components/Profile';
 
 const NavBarWrapper = () => {
   const [menuState, updateMenuState] = useState("menu");
@@ -38,6 +43,14 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <Register />
+      },
+      {
+        path: "/overview",
+        element: <Overview />
+      },
+      {
+        path: "/profile",
+        element: <Profile />
       }
     ]
   }
@@ -46,7 +59,9 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>
 );
 

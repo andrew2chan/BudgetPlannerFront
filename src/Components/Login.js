@@ -1,9 +1,17 @@
 import * as d3 from 'd3';
 import { useEffect, useRef, useState } from 'react';
+import { fetchPost } from '../HelperLib/fetch';
+import { useDispatch } from 'react-redux';
+import { updateUserData } from '../Redux/Slices/UserSlice';
+import { useNavigate } from 'react-router';
 
 const Login = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const [passwordVisible, updatePasswordVisible] = useState(false);
     const [showTextOrPassword, updateShowTextOrPassword] = useState("password");
+    const [errorMessageShown, updateErrorMessageShown] = useState("");
 
     const loginEmail = useRef();
     const loginPass = useRef();
@@ -64,27 +72,45 @@ const Login = () => {
     }
 
     const submitData = (email, pass) => {
-        
+        let opt = {
+            "email": email,
+            "password": pass
+        }
+
+        fetchPost("https://localhost:7054/api/User/login", opt)
+        .then((res) => {
+            if(!res.Error) { //if we run into an error for any reason
+                dispatch(updateUserData(res));
+
+                navigate("/overview");
+            }
+
+            //only goes here if we have an error
+            updateErrorMessageShown(res.Error);
+        })
     }
 
     return(
         <main className="h-[calc(100vh-theme('spacing.16'))] max-sm:px-4">
-            <div className="flex flex-col pt-10 gap-5">
-                <div>
-                    <div className="max-sm:text-2xl max-sm:font-medium flex-initial">Hello</div>
-                    <div className="text-md">Sign in using your email and password</div>
+            <form onSubmit={handleDataSubmit}>
+                <div className="flex flex-col pt-10 gap-5">
+                    <div>
+                        <div className="max-sm:text-2xl max-sm:font-medium flex-initial">Hello</div>
+                        <div className="text-md">Sign in using your email and password</div>
+                    </div>
+                    <div className="relative">
+                        <input type="text" className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginEmail} name="email" required></input>
+                        <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Email</span>
+                    </div>
+                    <div className="relative">
+                        <input type={showTextOrPassword} className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginPass} name="password" required></input>
+                        <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Password</span>
+                        <span className="material-symbols-outlined absolute right-3 top-1 cursor-pointer" onClick={handleVisible}>{!passwordVisible ? "visibility_off" : "visibility"}</span>
+                    </div>
+                    <input type="submit" className="border bg-blue-600 text-white rounded-2xl py-2 hover:shadow-[inset_0_0_10px_8px_theme('colors.blue.800')]"></input>
                 </div>
-                <div className="relative">
-                    <input type="text" className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginEmail}></input>
-                    <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Email</span>
-                </div>
-                <div className="relative">
-                    <input type={showTextOrPassword} className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginPass}></input>
-                    <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Password</span>
-                    <span className="material-symbols-outlined absolute right-3 top-1 cursor-pointer" onClick={handleVisible}>{!passwordVisible ? "visibility_off" : "visibility"}</span>
-                </div>
-                <input type="submit" className="border bg-blue-600 text-white rounded-2xl py-2" onClick={handleDataSubmit}></input>
-            </div>
+                <div className={errorMessageShown !== "" ? "visible text-red-600" : "hidden"}>{errorMessageShown}</div>
+            </form>
         </main>
     )
 }

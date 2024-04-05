@@ -12,7 +12,6 @@ const fetchGet = async (url) => {
     let get = await fetch(url, opt);
 
     let response = await get.json();
-    console.log(response);
     
     return response;
 }
@@ -22,7 +21,7 @@ This is a helper function that makes a fetch post request
 */
 const fetchPost = async (url, body) => {
     let opt = {
-        "method": "GET",
+        "method": "POST",
         "headers": {
             "Content-Type": "application/json"
         }

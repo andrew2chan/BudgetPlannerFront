@@ -7,6 +7,7 @@ const Register = () => {
 
     const loginEmail = useRef();
     const loginPass = useRef();
+    const loginName= useRef();
 
     useEffect(() => {
         d3.selectAll("input[type=text],input[type=password]")
@@ -59,32 +60,39 @@ const Register = () => {
 
         let email = loginEmail.current.value;
         let pass = loginPass.current.value;
+        let name = loginName.current.value;
 
-        submitData(email, pass)
+        submitData(email, pass, name)
     }
 
-    const submitData = (email, pass) => {
+    const submitData = (email, pass, name) => {
 
     }
 
     return(
         <main className="h-[calc(100vh-theme('spacing.16'))] max-sm:px-4">
-            <div className="flex flex-col pt-10 gap-5">
-                <div>
-                    <div className="max-sm:text-2xl max-sm:font-medium flex-initial">Register</div>
-                    <div className="text-md">Register using your email and password</div>
+            <form onSubmit={handleDataSubmit}>
+                <div className="flex flex-col pt-10 gap-5">
+                    <div>
+                        <div className="max-sm:text-2xl max-sm:font-medium flex-initial">Register</div>
+                        <div className="text-md">Register by filling out the fields below</div>
+                    </div>
+                    <div className="relative">
+                        <input type="text" className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" name="name" ref={loginName} required></input>
+                        <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Name</span>
+                    </div>
+                    <div className="relative">
+                        <input type="text" className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginEmail} name="email" required></input>
+                        <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Email</span>
+                    </div>
+                    <div className="relative">
+                        <input type={showTextOrPassword} className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginPass} name="password" required></input>
+                        <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Password</span>
+                        <span className="material-symbols-outlined absolute right-3 top-1 cursor-pointer" onClick={handleVisible}>{!passwordVisible ? "visibility_off" : "visibility"}</span>
+                    </div>
+                    <input type="submit" className="border bg-blue-600 text-white rounded-2xl py-2 w-full hover:shadow-[inset_0_0_10px_8px_theme('colors.blue.800')]"></input>
                 </div>
-                <div className="relative">
-                    <input type="text" className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginEmail}></input>
-                    <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Email</span>
-                </div>
-                <div className="relative">
-                    <input type={showTextOrPassword} className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginPass}></input>
-                    <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Password</span>
-                    <span className="material-symbols-outlined absolute right-3 top-1 cursor-pointer" onClick={handleVisible}>{!passwordVisible ? "visibility_off" : "visibility"}</span>
-                </div>
-                <input type="submit" className="border bg-blue-600 text-white rounded-2xl py-2 w-full" onClick={handleDataSubmit}></input>
-            </div>
+            </form>
         </main>
     )
 }
