@@ -1,3 +1,5 @@
+const serverErrorMessage = { "Error": "Server error: Please try again later" };
+
 /*
 This is a helper function that makes a fetch get request
 */
@@ -9,11 +11,15 @@ const fetchGet = async (url) => {
         }
     }
 
-    let get = await fetch(url, opt);
+    let get = await fetch(url, opt).catch((err) => console.log(err));
 
-    let response = await get.json();
-    
-    return response;
+    if(get) {
+        let response = await get.json();
+        
+        return response;
+    }
+
+    return serverErrorMessage
 }
 
 /*
@@ -29,11 +35,15 @@ const fetchPost = async (url, body) => {
 
     if(body !== undefined) opt.body = JSON.stringify(body); //if we have a body passed in then add it to the options
 
-    let post = await fetch(url, opt);
+    let post = await fetch(url, opt).catch((err) => console.log(err));
 
-    let response = await post.json();
-    
-    return response;
+    if(post) {
+        let response = await post.json();
+        
+        return response;
+    }
+
+    return serverErrorMessage
 }
 
 export { fetchGet, fetchPost };

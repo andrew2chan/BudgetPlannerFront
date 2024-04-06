@@ -82,7 +82,7 @@ const Login = () => {
             if(!res.Error) { //if we run into an error for any reason
                 dispatch(updateUserData(res));
 
-                navigate("/overview");
+                navigate("/dashboard");
             }
 
             //only goes here if we have an error

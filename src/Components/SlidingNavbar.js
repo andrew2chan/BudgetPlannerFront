@@ -37,6 +37,9 @@ const SlidingNavbar = ({ menustate, updatemenustate }) => {
 
     const handleLoggedInSidebar = (e) => {
         switch(e.target.id) {
+            case 'dashboard':
+                navigate("/dashboard");
+                break;
             case 'logout':
                 dispatch(clearUserData());
                 navigate("/");
@@ -66,8 +69,8 @@ const SlidingNavbar = ({ menustate, updatemenustate }) => {
                     <div className="flex flex-col">
                         <span className="material-symbols-outlined max-sm:text-4xl self-end" onClick={handleCloseSidebar}><button>close</button></span>
                         <ul className="max-w-full overflow-hidden flex flex-col items-center">
-                            <li className="py-3 border-b-2"><button>Overview</button></li>
-                            <li className="py-3 border-b-2"><button>Profile</button></li>
+                            <li className="py-3 border-b-2"><button onClick={handleLoggedInSidebar} id="overview">Overview</button></li>
+                            <li className="py-3 border-b-2"><button onClick={handleLoggedInSidebar} id="profile">Profile</button></li>
                             <li className="py-3 border-b-2"><button onClick={handleLoggedInSidebar} id="logout">Logout</button></li>
                         </ul>
                     </div>

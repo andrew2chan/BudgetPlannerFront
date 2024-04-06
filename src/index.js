@@ -12,7 +12,7 @@ import LandingPage from './Components/LandingPage';
 import SlidingNavbar from './Components/SlidingNavbar';
 
 import store from './Redux/store';
-import Overview from './Components/Overview';
+import Dashboard from './Components/Dashboard';
 import Profile from './Components/Profile';
 
 const NavBarWrapper = () => {
@@ -45,12 +45,15 @@ const router = createBrowserRouter([
         element: <Register />
       },
       {
-        path: "/overview",
-        element: <Overview />
-      },
-      {
-        path: "/profile",
-        element: <Profile />
+        path: "/dashboard",
+        element: <Dashboard />,
+        children: [
+          {
+            path: "/dashboard/profile",
+            element: <Profile />
+          }
+
+        ]
       }
     ]
   }
