@@ -1,13 +1,18 @@
 import * as d3 from 'd3';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { fetchPost } from '../HelperLib/fetch';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
+    const navigate = useNavigate();
+
     const [passwordVisible, updatePasswordVisible] = useState(false);
     const [showTextOrPassword, updateShowTextOrPassword] = useState("password");
+    const [errorMessageShown, updateErrorMessageShown] = useState("");
 
-    const loginEmail = useRef();
-    const loginPass = useRef();
-    const loginName= useRef();
+    const [loginEmail, updateLoginEmail] = useState('');
+    const [loginPass, updateLoginPass] = useState('');
+    const [loginName, updateLoginName] = useState('');
 
     useEffect(() => {
         d3.selectAll("input[type=text],input[type=password]")
@@ -55,18 +60,46 @@ const Register = () => {
         updatePasswordVisible(!passwordVisible);
     }
 
+    const handleLoginEmail = (e) => {
+        updateLoginEmail(e.target.value);
+    }
+
+    const handleLoginPass = (e) => {
+        updateLoginPass(e.target.value);
+    }
+
+    const handleLoginName = (e) => {
+        updateLoginName(e.target.value);
+    }
+
     const handleDataSubmit = (e) => {
         e.preventDefault();
 
-        let email = loginEmail.current.value;
-        let pass = loginPass.current.value;
-        let name = loginName.current.value;
+        let email = loginEmail;
+        let pass = loginPass;
+        let name = loginName;
 
         submitData(email, pass, name)
     }
 
     const submitData = (email, pass, name) => {
+        let opt = {
+            "email": email,
+            "password": pass,
+            "name": name,
+            "monthlyIncome": 0,
+            "budgetItems": []
+        }
 
+        fetchPost("https://localhost:7054/api/User", opt)
+        .then((res) => {
+            if(!res.Error) {
+                navigate("/login");
+            }
+
+            //only goes here if we have an error
+            updateErrorMessageShown(res.Error);
+        })
     }
 
     return(
@@ -78,20 +111,21 @@ const Register = () => {
                         <div className="text-md">Register by filling out the fields below</div>
                     </div>
                     <div className="relative">
-                        <input type="text" className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" name="name" ref={loginName} required></input>
+                        <input type="text" className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" name="name" onChange={handleLoginName} value={loginName} required></input>
                         <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Name</span>
                     </div>
                     <div className="relative">
-                        <input type="text" className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginEmail} name="email" required></input>
+                        <input type="text" className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" onChange={handleLoginEmail} value={loginEmail} name="email" required></input>
                         <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Email</span>
                     </div>
                     <div className="relative">
-                        <input type={showTextOrPassword} className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginPass} name="password" required></input>
+                        <input type={showTextOrPassword} className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" onChange={handleLoginPass} value={loginPass} name="password" required></input>
                         <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Password</span>
                         <span className="material-symbols-outlined absolute right-3 top-1 cursor-pointer" onClick={handleVisible}>{!passwordVisible ? "visibility_off" : "visibility"}</span>
                     </div>
                     <input type="submit" className="border bg-blue-600 text-white rounded-2xl py-2 w-full hover:shadow-[inset_0_0_10px_8px_theme('colors.blue.800')]"></input>
                 </div>
+                <div className={errorMessageShown !== "" ? "visible text-red-600" : "hidden"}>{errorMessageShown}</div>
             </form>
         </main>
     )

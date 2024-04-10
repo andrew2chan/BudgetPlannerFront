@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchPost } from '../HelperLib/fetch';
 import { useDispatch } from 'react-redux';
 import { updateUserData } from '../Redux/Slices/UserSlice';
@@ -13,8 +13,8 @@ const Login = () => {
     const [showTextOrPassword, updateShowTextOrPassword] = useState("password");
     const [errorMessageShown, updateErrorMessageShown] = useState("");
 
-    const loginEmail = useRef();
-    const loginPass = useRef();
+    const [loginEmail, updateLoginEmail] = useState('');
+    const [loginPass, updateLoginPass] = useState('');
 
     useEffect(() => {
         d3.selectAll("input[type=text],input[type=password]")
@@ -62,11 +62,19 @@ const Login = () => {
         updatePasswordVisible(!passwordVisible);
     }
 
+    const handleLoginEmail = (e) => {
+        updateLoginEmail(e.target.value);
+    }
+
+    const handleLoginPass = (e) => {
+        updateLoginPass(e.target.value);
+    }
+
     const handleDataSubmit = (e) => {
         e.preventDefault();
 
-        let email = loginEmail.current.value;
-        let pass = loginPass.current.value;
+        let email = loginEmail;
+        let pass = loginPass;
 
         submitData(email, pass)
     }
@@ -99,11 +107,11 @@ const Login = () => {
                         <div className="text-md">Sign in using your email and password</div>
                     </div>
                     <div className="relative">
-                        <input type="text" className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginEmail} name="email" required></input>
+                        <input type="text" className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" onChange={handleLoginEmail} value={loginEmail} name="email" required></input>
                         <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Email</span>
                     </div>
                     <div className="relative">
-                        <input type={showTextOrPassword} className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" ref={loginPass} name="password" required></input>
+                        <input type={showTextOrPassword} className="border rounded-md border-gray-600 p-1 bg-slate-50 w-full" onChange={handleLoginPass} value={loginPass} name="password" required></input>
                         <span className="absolute left-4 top-1 pointer-events-none text-md transition-all">Password</span>
                         <span className="material-symbols-outlined absolute right-3 top-1 cursor-pointer" onClick={handleVisible}>{!passwordVisible ? "visibility_off" : "visibility"}</span>
                     </div>

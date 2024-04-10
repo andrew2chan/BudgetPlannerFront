@@ -38,6 +38,7 @@ const fetchPost = async (url, body) => {
     let post = await fetch(url, opt).catch((err) => console.log(err));
 
     if(post) {
+        if(parseInt(post.headers.get("content-length")) === 0 || post.status === 204) return { "status": "registered successfully" }; //return if we don't have any content or if we return no content
         let response = await post.json();
         
         return response;
