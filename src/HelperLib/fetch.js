@@ -38,7 +38,7 @@ const fetchPost = async (url, body) => {
     let post = await fetch(url, opt).catch((err) => console.log(err));
 
     if(post) {
-        if(parseInt(post.headers.get("content-length")) === 0 || post.status === 204) return { "status": "registered successfully" }; //return if we don't have any content or if we return no content
+        if(parseInt(post.headers.get("content-length")) === 0 || post.status === 204) return { "status": "success" }; //return if we don't have any content or if we return no content
         let response = await post.json();
         
         return response;
@@ -47,4 +47,29 @@ const fetchPost = async (url, body) => {
     return serverErrorMessage
 }
 
-export { fetchGet, fetchPost };
+/*
+This is a helper function that makes a put request
+*/
+const fetchPut = async (url, body) => {
+    let opt = {
+        "method": "PUT",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+
+    if(body !== undefined) opt.body = JSON.stringify(body); //if we have a body passed in then add it to the options
+
+    let put = await fetch(url, opt).catch((err) => console.log(err));
+
+    if(put) {
+        if(parseInt(put.headers.get("content-length")) === 0 || put.status === 204) return { "status": "sucess" }; //return if we don't have any content or if we return no content
+        let response = await put.json();
+        
+        return response;
+    }
+
+    return serverErrorMessage
+}
+
+export { fetchGet, fetchPost, fetchPut };

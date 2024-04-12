@@ -1,10 +1,15 @@
 import React from "react";
 import Profile from "./Profile";
 
+import { returnConnectionString } from '../HelperLib/connection';
+import { updateUserBudgetItems } from '../Redux/Slices/UserSlice';
+import { fetchPut } from "../HelperLib/fetch";
+
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 const Dashboard = () => {
+    const dispatch = useDispatch();
     const budgetItems = useSelector(state => state.user.userData);
     const [currentBudgetItemList, updateCurrentBudgetItemList] = useState({});
     const [additionalOptions, updateAdditionalOptions] = useState([]);
@@ -12,11 +17,53 @@ const Dashboard = () => {
 
     useEffect(() => {
         updateCurrentBudgetItemList(budgetItems); //update this once our budgetItems is loaded
+
+        if(Object.keys(budgetItems).length > 0 && budgetItems.budgetItems.length > 0) updateIndexCounter(budgetItems.budgetItems[budgetItems.budgetItems.length-1].id + 1); //set the initial counter to whatever is next after the last id
     },[budgetItems]);
 
     const handleAddNewItem = () => {
         updateAdditionalOptions([ ...additionalOptions, {id: indexCounter, label: '', cost: '' } ]); //add more boxes
         updateIndexCounter(indexCounter + 1);
+    }
+
+    const handleCostChangeExisting = (e) => {
+        let updateBudgetCostExisting = currentBudgetItemList.budgetItems.map((item) => {
+            if(parseInt(item.id) === parseInt(e.target.dataset.index)) {
+                return { ...item, budgetItemCost: e.target.value };
+            }
+            return item;
+        });
+
+        let finalUpdateItem = {
+            ...budgetItems,
+            budgetItems: [ ...updateBudgetCostExisting ]
+        }
+
+        updateCurrentBudgetItemList(finalUpdateItem);
+    }
+
+    /*
+    *   Everytime you lose focus on one of the existing boxes then it updates the backend
+    */
+    const handleFocusLost = (e) => {
+        let specificRecord = currentBudgetItemList.budgetItems.filter((item) => {
+            if(parseInt(e.target.dataset.index) === parseInt(item.id)) return true;
+            return false;
+        })
+
+        let opt = {
+            ...specificRecord[0]
+        };
+
+        fetchPut(returnConnectionString() + "/api/BudgetItem", opt)
+        .then((res) => {
+            if(!res.Error) {
+                dispatch(updateUserBudgetItems(opt));
+                return;
+            }
+
+            console.log(res);
+        })
     }
 
     const handleRemoveAdditionalOption = (e) => {
@@ -61,8 +108,11 @@ const Dashboard = () => {
                             currentBudgetItemList !== undefined && currentBudgetItemList.budgetItems ? currentBudgetItemList.budgetItems.map((item, index) => {
                                 return (
                                     <React.Fragment key={index}>
-                                        <label htmlFor={item.budgetItemName}>{item.budgetItemName}</label>
-                                        <input type="number" id={item.budgetItemName} value={item.budgetItemCost} className="border rounded-lg max-h p-2 w-full"></input>
+                                        <label htmlFor={item.budgetItemName} data-index={item.id}>{item.budgetItemName}</label>
+                                        <span className="flex items-center">
+                                            <input type="number" data-index={item.id} value={item.budgetItemCost} onChange={handleCostChangeExisting} onBlur={handleFocusLost} className="border rounded-lg max-h p-2 w-full"></input>
+                                            <span className="material-symbols-outlined" id={item.id}>delete</span>
+                                        </span>
                                     </React.Fragment>
                                 )
                             })
@@ -73,12 +123,12 @@ const Dashboard = () => {
                             additionalOptions.length > 0 && additionalOptions.map((item, index) => {
                                 return (
                                     <React.Fragment key={index}>
-                                        <input type="text" className={`border rounded-lg max-h p-2 w-full`} placeholder="Label" value={item.label} onChange={handleLabelChange} data-index={item.id}></input>
-                                        <span className={`flex items-center`}>
+                                        <input type="text" className="border rounded-lg max-h p-2 w-full" placeholder="Label" value={item.label} onChange={handleLabelChange} data-index={item.id}></input>
+                                        <span className="flex items-center">
                                             <input type="number" className="border rounded-lg max-h p-2 w-full" placeholder="Value" valie={item.cost} onChange={handleCostChange} data-index={item.id}></input>
                                             <span className="flex">
-                                                <span className={`material-symbols-outlined`}>add</span>
-                                                <span className={`material-symbols-outlined`} id={item.id} onClick={handleRemoveAdditionalOption}>delete</span>
+                                                <span className="material-symbols-outlined">add</span>
+                                                <span className="material-symbols-outlined" id={item.id} onClick={handleRemoveAdditionalOption}>delete</span>
                                             </span>
                                         </span>
                                     </React.Fragment>

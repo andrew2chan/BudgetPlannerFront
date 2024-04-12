@@ -1,3 +1,4 @@
+import {returnConnectionString } from '../HelperLib/connection';
 import * as d3 from 'd3';
 import { useEffect, useState } from 'react';
 import { fetchPost } from '../HelperLib/fetch';
@@ -91,7 +92,7 @@ const Register = () => {
             "budgetItems": []
         }
 
-        fetchPost("https://localhost:7054/api/User", opt)
+        fetchPost(returnConnectionString() + "/api/User", opt)
         .then((res) => {
             if(!res.Error) {
                 navigate("/login");

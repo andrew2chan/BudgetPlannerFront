@@ -1,3 +1,5 @@
+import {returnConnectionString } from '../HelperLib/connection';
+
 import * as d3 from 'd3';
 import { useEffect, useState } from 'react';
 import { fetchPost } from '../HelperLib/fetch';
@@ -85,7 +87,7 @@ const Login = () => {
             "password": pass
         }
 
-        fetchPost("https://localhost:7054/api/User/login", opt)
+        fetchPost(returnConnectionString() + "/api/User/login", opt)
         .then((res) => {
             if(!res.Error) { //if we run into an error for any reason
                 dispatch(updateUserData(res));
