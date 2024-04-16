@@ -63,7 +63,7 @@ const fetchPut = async (url, body) => {
     let put = await fetch(url, opt).catch((err) => console.log(err));
 
     if(put) {
-        if(parseInt(put.headers.get("content-length")) === 0 || put.status === 204) return { "status": "sucess" }; //return if we don't have any content or if we return no content
+        if(parseInt(put.headers.get("content-length")) === 0 || put.status === 204) return { "status": "success" }; //return if we don't have any content or if we return no content
         let response = await put.json();
         
         return response;
@@ -72,4 +72,27 @@ const fetchPut = async (url, body) => {
     return serverErrorMessage
 }
 
-export { fetchGet, fetchPost, fetchPut };
+/*
+This is a helper function that makes a delete request
+*/
+const fetchDelete = async (url) => {
+    let opt = {
+        "method": "DELETE",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+
+    let deleteRequest = await fetch(url, opt).catch((err) => console.log(err));
+
+    if(deleteRequest) {
+        if(parseInt(deleteRequest.headers.get("content-length")) === 0 || deleteRequest.status === 204) return { "status": "success" }; //return if we don't have any content or if we return no content
+        let response = await deleteRequest.json();
+        
+        return response;
+    }
+
+    return serverErrorMessage
+}
+
+export { fetchGet, fetchPost, fetchPut, fetchDelete };
