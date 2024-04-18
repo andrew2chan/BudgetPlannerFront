@@ -33,28 +33,25 @@ const router = createBrowserRouter([
     element: <NavBarWrapper />,
     children: [
       {
-        path: "/",
+        index: true,
         element: <LandingPage />
       },
       {
-        path: "/login",
+        path: "login",
         element: <Login />
       },
       {
-        path: "/register",
+        path: "register",
         element: <Register />
       },
       {
-        path: "/dashboard",
+        path: "dashboard",
         element: <Dashboard />,
-        children: [
-          {
-            path: "/dashboard/profile",
-            element: <Profile />
-          }
-
-        ]
-      }
+      },
+      {
+        path: "/dashboard/profile",
+        element: <Profile />
+      },
     ]
   }
 ]);

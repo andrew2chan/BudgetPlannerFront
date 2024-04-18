@@ -110,7 +110,7 @@ const Dashboard = () => {
     /*
     *   Everytime you lose focus on one of the existing boxes then it updates the backend
     */
-    const handleFocusLost = (e) => {
+    const handleFocusLostExisting = (e) => {
         let specificRecord = currentBudgetItemList.budgetItems.filter((item) => {
             if(parseInt(e.target.dataset.index) === parseInt(item.id)) return true;
             return false;
@@ -174,8 +174,34 @@ const Dashboard = () => {
     *   handles what happens when the total monthly income changes
     */
     const handleMonthlyIncomeUpdate = (e) => {
+        let newBudget = {
+            ...currentBudgetItemList,
+            monthlyIncome: e.target.value
+        }
         
+        updateCurrentBudgetItemList(newBudget);
     }
+
+    /*
+    *   handles what happens when we click off of the income
+    */
+   const handleFocusLostMonthly = (e) => {
+        let newMonthlyIncome = {
+            "id": currentBudgetItemList.id,
+            "monthlyIncome": currentBudgetItemList.monthlyIncome
+        }
+
+        fetchPut(returnConnectionString() + "/api/User/monthlyincome", newMonthlyIncome)
+        .then((res) => {
+            if(!res.Error) {
+                console.log("successfully updated user's monthly income");
+
+                return;
+            }
+
+            console.log(res.Error);
+        })
+   }
 
     return (
         <>
@@ -191,7 +217,7 @@ const Dashboard = () => {
                                     <React.Fragment key={index}>
                                         <label htmlFor={item.budgetItemName} data-index={item.id}>{item.budgetItemName}</label>
                                         <span className="flex items-center">
-                                            <input type="number" data-index={item.id} value={item.budgetItemCost} onChange={handleCostChangeExisting} onBlur={handleFocusLost} className="border rounded-lg max-h p-2 w-full"></input>
+                                            <input type="number" data-index={item.id} value={item.budgetItemCost} onChange={handleCostChangeExisting} onBlur={handleFocusLostExisting} className="border rounded-lg max-h p-2 w-full"></input>
                                             <span className="material-symbols-outlined" id={item.id} onClick={handleDeleteExisting}>delete</span>
                                         </span>
                                     </React.Fragment>
@@ -221,7 +247,7 @@ const Dashboard = () => {
                         <span></span>
                         <hr></hr>
                         <label htmlFor="totalBudget">Total monthly budget:</label>
-                        <input type="number" id="totalBudget" value={currentBudgetItemList !== undefined ? currentBudgetItemList.monthlyIncome : 0} className="border rounded-lg max-h p-2 w-full" onChange={handleMonthlyIncomeUpdate}></input>
+                        <input type="number" id="totalBudget" value={currentBudgetItemList !== undefined ? currentBudgetItemList.monthlyIncome : 0} className="border rounded-lg max-h p-2 w-full" onChange={handleMonthlyIncomeUpdate} onBlur={handleFocusLostMonthly}></input>
                     </div>
                 </section>
                 <section>
