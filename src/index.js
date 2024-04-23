@@ -1,60 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
-import App from './App';
-import Login from './Components/Login';
-import Register from './Components/Register';
-import LandingPage from './Components/LandingPage';
-import SlidingNavbar from './Components/SlidingNavbar';
+import { routes } from "./HelperLib/routes.js"
 
 import store from './Redux/store';
-import Dashboard from './Components/Dashboard';
-import Profile from './Components/Profile';
 
-const NavBarWrapper = () => {
-  const [menuState, updateMenuState] = useState("menu");
-
-  return (
-    <>
-      <App updatemenustate={updateMenuState} menustate={menuState} />
-      <Outlet />
-      <SlidingNavbar updatemenustate={updateMenuState} menustate={menuState} />
-    </>
-  )
-}
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <NavBarWrapper />,
-    children: [
-      {
-        index: true,
-        element: <LandingPage />
-      },
-      {
-        path: "login",
-        element: <Login />
-      },
-      {
-        path: "register",
-        element: <Register />
-      },
-      {
-        path: "dashboard",
-        element: <Dashboard />,
-      },
-      {
-        path: "/dashboard/profile",
-        element: <Profile />
-      },
-    ]
-  }
-]);
+const router = createBrowserRouter(routes);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

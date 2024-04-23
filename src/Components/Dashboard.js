@@ -1,5 +1,4 @@
 import React from "react";
-import Profile from "./Profile";
 
 import { returnConnectionString } from '../HelperLib/connection';
 import { updateUserBudgetItems } from '../Redux/Slices/UserSlice';
@@ -11,8 +10,8 @@ import { useSelector, useDispatch } from 'react-redux';
 const Dashboard = () => {
     const dispatch = useDispatch();
     const budgetItems = useSelector(state => state.user.userData);
-    const [currentBudgetItemList, updateCurrentBudgetItemList] = useState({});
-    const [additionalOptions, updateAdditionalOptions] = useState([]);
+    const [currentBudgetItemList, updateCurrentBudgetItemList] = useState("");
+    const [additionalOptions, updateAdditionalOptions] = useState("");
     const [indexCounter, updateIndexCounter] = useState(0);
 
     useEffect(() => {
@@ -114,11 +113,13 @@ const Dashboard = () => {
         let specificRecord = currentBudgetItemList.budgetItems.filter((item) => {
             if(parseInt(e.target.dataset.index) === parseInt(item.id)) return true;
             return false;
-        })
+        });
 
         let opt = {
             ...specificRecord[0]
         };
+
+        console.log(opt);
 
         fetchPut(returnConnectionString() + "/api/BudgetItem", opt)
         .then((res) => {
@@ -206,7 +207,7 @@ const Dashboard = () => {
     return (
         <>
             <main className="flex flex-col w-11/12 mx-auto mt-4">
-                <header className="text-3xl font-bold py-4">
+                <header className="text-2xl font-bold py-4">
                     Overview
                 </header>
                 <section className="border rounded-sm px-2 py-3 drop-shadow my-3">
@@ -217,7 +218,7 @@ const Dashboard = () => {
                                     <React.Fragment key={index}>
                                         <label htmlFor={item.budgetItemName} data-index={item.id}>{item.budgetItemName}</label>
                                         <span className="flex items-center">
-                                            <input type="number" data-index={item.id} value={item.budgetItemCost} onChange={handleCostChangeExisting} onBlur={handleFocusLostExisting} className="border rounded-lg max-h p-2 w-full"></input>
+                                            <input type="number" data-index={item.id} value={item.budgetItemCost? item.budgetItemCost : 0} onChange={handleCostChangeExisting} onBlur={handleFocusLostExisting} className="border rounded-lg max-h p-2 w-full"></input>
                                             <span className="material-symbols-outlined" id={item.id} onClick={handleDeleteExisting}>delete</span>
                                         </span>
                                     </React.Fragment>

@@ -20,7 +20,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "coverage": "react-scripts test --coverage --watchAll"
   },
   "eslintConfig": {
     "extends": [
@@ -42,5 +43,11 @@
   },
   "devDependencies": {
     "jest": "^27.5.1"
+  },
+  "jest": {
+    "transformIgnorePatterns": ["!node_modules/d3*"],
+    "collectCoverageFrom": [
+      "src/Components/**/*.{js,jsx,ts,tsx}"
+    ]
   }
 }
