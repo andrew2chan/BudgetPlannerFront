@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 
 import { returnConnectionString } from '../HelperLib/connection';
-import { updateUserBudgetItems } from '../Redux/Slices/UserSlice';
+import { updateUserBudgetItems, updateUserData } from '../Redux/Slices/UserSlice';
 import { fetchPut, fetchPost, fetchDelete } from "../HelperLib/fetch";
 
-import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import PieChart from "./PieChart";
 
 const Dashboard = () => {
     const dispatch = useDispatch();
@@ -39,11 +39,12 @@ const Dashboard = () => {
 
                 let findExistingBudgetItem = currentBudgetItemList.budgetItems.filter((item) => parseInt(item.id) !== parseInt(e.target.id));
                 let finalUpdateItem = {
-                    ...budgetItems,
+                    ...currentBudgetItemList,
                     budgetItems: findExistingBudgetItem
                 }
 
-                updateCurrentBudgetItemList(finalUpdateItem);
+                //updateCurrentBudgetItemList(finalUpdateItem);
+                dispatch(updateUserData(finalUpdateItem));
 
                 return;
             }
@@ -68,11 +69,12 @@ const Dashboard = () => {
         let newCurrentBudgetItemList = [ ...currentBudgetItemList.budgetItems, newBudgetItem ];
 
         let finalUpdateItem = {
-            ...budgetItems,
+            ...currentBudgetItemList,
             budgetItems: [ ...newCurrentBudgetItemList ]
         }
 
-        updateCurrentBudgetItemList(finalUpdateItem);
+        //updateCurrentBudgetItemList(finalUpdateItem);
+        dispatch(updateUserData(finalUpdateItem));
 
         fetchPost(returnConnectionString() + "/api/BudgetItem", newBudgetItem) //add the new budget item to the db
         .then((res) => {
@@ -93,17 +95,19 @@ const Dashboard = () => {
     const handleCostChangeExisting = (e) => {
         let updateBudgetCostExisting = currentBudgetItemList.budgetItems.map((item) => {
             if(parseInt(item.id) === parseInt(e.target.dataset.index)) {
-                return { ...item, budgetItemCost: e.target.value };
+                return { ...item, budgetItemCost: 0 || parseTo2Digits(e.target.value) };
             }
             return item;
         });
 
         let finalUpdateItem = {
-            ...budgetItems,
+            ...currentBudgetItemList,
             budgetItems: [ ...updateBudgetCostExisting ]
         }
 
-        updateCurrentBudgetItemList(finalUpdateItem);
+        //updateCurrentBudgetItemList(finalUpdateItem);
+        dispatch(updateUserData(finalUpdateItem));
+
     }
 
     /*
@@ -118,8 +122,6 @@ const Dashboard = () => {
         let opt = {
             ...specificRecord[0]
         };
-
-        console.log(opt);
 
         fetchPut(returnConnectionString() + "/api/BudgetItem", opt)
         .then((res) => {
@@ -163,7 +165,7 @@ const Dashboard = () => {
     const handleCostChange = (e) => {
         let newObj = additionalOptions.map((item, index) => {
             if(parseInt(item.id) === parseInt(e.target.dataset.index)) {
-                return { ...item, 'cost': e.target.value };
+                return { ...item, 'cost': parseTo2Digits(e.target.value) };
             }
             return item;
         });
@@ -177,10 +179,11 @@ const Dashboard = () => {
     const handleMonthlyIncomeUpdate = (e) => {
         let newBudget = {
             ...currentBudgetItemList,
-            monthlyIncome: e.target.value
+            monthlyIncome: parseTo2Digits(e.target.value)
         }
         
-        updateCurrentBudgetItemList(newBudget);
+        //updateCurrentBudgetItemList(newBudget);
+        dispatch(updateUserData(newBudget));
     }
 
     /*
@@ -204,6 +207,17 @@ const Dashboard = () => {
         })
    }
 
+   const parseTo2Digits = (val) => {
+        let inputValue = (val).toString().replace(/[^0-9.]|(?<=\..*)\./g, ''); //replace all non-numerics with blanks and only 1 decimal value [^0-9.] - replaces all that isn't a number or . / (?<=\..*)\. replaces anytime a . has another dot before IE. 2.2. will match the second period
+
+        const decimalDelimit = inputValue.indexOf("."); // looks for 1 decimal
+        if(decimalDelimit !== -1) {
+            inputValue = inputValue.slice(0, decimalDelimit + 3); //takes everything up to 3 spots after
+        }
+
+        return inputValue;
+   }
+
     return (
         <>
             <main className="flex flex-col w-11/12 mx-auto mt-4">
@@ -218,7 +232,7 @@ const Dashboard = () => {
                                     <React.Fragment key={index}>
                                         <label htmlFor={item.budgetItemName} data-index={item.id}>{item.budgetItemName}</label>
                                         <span className="flex items-center">
-                                            <input type="number" data-index={item.id} value={item.budgetItemCost? item.budgetItemCost : 0} onChange={handleCostChangeExisting} onBlur={handleFocusLostExisting} className="border rounded-lg max-h p-2 w-full"></input>
+                                            <input type="text" data-index={item.id} value={item.budgetItemCost} onChange={handleCostChangeExisting} onBlur={handleFocusLostExisting} className="border rounded-lg max-h p-2 w-full"></input>
                                             <span className="material-symbols-outlined" id={item.id} onClick={handleDeleteExisting}>delete</span>
                                         </span>
                                     </React.Fragment>
@@ -248,11 +262,11 @@ const Dashboard = () => {
                         <span></span>
                         <hr></hr>
                         <label htmlFor="totalBudget">Total monthly budget:</label>
-                        <input type="number" id="totalBudget" value={currentBudgetItemList !== undefined ? currentBudgetItemList.monthlyIncome : 0} className="border rounded-lg max-h p-2 w-full" onChange={handleMonthlyIncomeUpdate} onBlur={handleFocusLostMonthly}></input>
+                        <input type="text" id="totalBudget" value={currentBudgetItemList.monthlyIncome} className="border rounded-lg max-h p-2 w-full" onChange={handleMonthlyIncomeUpdate} onBlur={handleFocusLostMonthly}></input>
                     </div>
                 </section>
                 <section>
-                    This is the section for the pie graph
+                    <PieChart />
                 </section>
             </main>
         </>
