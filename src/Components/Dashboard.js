@@ -105,6 +105,9 @@ const Dashboard = () => {
             budgetItems: [ ...updateBudgetCostExisting ]
         }
 
+        let sum = finalUpdateItem.budgetItems.reduce((acc, curr) => acc + parseFloat(curr.budgetItemCost), 0); //check the final input before dispatching to redux to make sure that it is less than  or equal to max value
+        if(sum > finalUpdateItem.monthlyIncome) return;
+
         //updateCurrentBudgetItemList(finalUpdateItem);
         dispatch(updateUserData(finalUpdateItem));
 
